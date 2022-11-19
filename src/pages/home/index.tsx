@@ -55,7 +55,14 @@ const Home: FC = () => {
             });
         })}
       >
-        <TextInput type="email" label="メールアドレス" mt="sm" required />
+        <TextInput
+          type="email"
+          label="メールアドレス"
+          mt="sm"
+          required
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...form.getInputProps("email")}
+        />
         <Checkbox
           label={
             <span>
