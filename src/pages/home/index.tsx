@@ -20,6 +20,18 @@ const Home: FC = () => {
       </h1>
       <div className="text-center text-sm my-2">
         <p>
+          これは、Misskeyインスタンス{" "}
+          <a
+            href={import.meta.env.VITE_INSTANCE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-indigo-600"
+          >
+            {import.meta.env.VITE_INSTANCE_URL.replace(/https?:\/\//, "").replace(/\//g, "")}
+          </a>{" "}
+          の招待発行ページです
+        </p>
+        <p>
           高専機構が発行したあなたのメールアドレス<span>(*@*.kosen-ac.jp)</span>
           を入力して下さい
         </p>
