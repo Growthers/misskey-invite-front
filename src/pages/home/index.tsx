@@ -6,6 +6,7 @@ import { client } from "../../libs/axios";
 
 const Home: FC = () => {
   const [msg, setMsg] = useState<string>();
+  const [btnDisable, setBtnDisable] = useState(false);
   const form = useForm({
     initialValues: {
       email: "",
@@ -57,8 +58,12 @@ const Home: FC = () => {
             .then((res) => {
               setMsg("");
               const status = res.data.status as string;
-              if (status === "OK") setMsg("メールを確認してください");
-              else if (status === "NG")
+              if (status === "OK") {
+                setMsg("メールを確認してください");
+                setBtnDisable(true);
+                form.setFieldValue("termsOfService", false);
+                setTimeout(() => setBtnDisable(false), 10000);
+              } else if (status === "NG")
                 setMsg("メールアドレスが不正か、学校のメールアドレスリストに登録されていません");
               else setMsg("エラーが発生しました");
             })
@@ -90,9 +95,12 @@ const Home: FC = () => {
             </span>
           }
           mt="sm"
+          checked={form.values.termsOfService}
           required
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...form.getInputProps("termsOfService")}
         />
-        <Button type="submit" my="sm" className="bg-[#0072bf]">
+        <Button type="submit" my="sm" className="bg-[#0072bf]" disabled={btnDisable}>
           メールを認証する
         </Button>
         {msg && <p className="my-2 text-red-600">{msg}</p>}
