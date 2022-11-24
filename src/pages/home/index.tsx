@@ -50,23 +50,31 @@ const Home: FC = () => {
         </p>
       </div>
       <form
-        onSubmit={form.onSubmit(async (values) => {
-          const res = await client.post("/api/v1/request", {
-            email: values.email,
-          });
-          const { resStatus, resMessage }: { resStatus: string; resMessage: string } = res.data;
-
-          if (resStatus === "OK") {
-            setMsg("メールを確認してください");
-            setBtnDisable(true);
-            form.setFieldValue("termsOfService", false);
-            setTimeout(() => setBtnDisable(false), 10000);
-          } else if (resStatus === "NG") {
-            if (resMessage === "EXIST_EMAIL") setMsg("すでに登録されているメールアドレスです");
-            else if (resMessage === "UNAUTHORIZED_DOMAIN") setMsg("認証ドメインのメールアドレスではないようです");
-            else if (resMessage === "BAD_FORMAT") setMsg("不適切なフォーマットです");
-            else setMsg("エラーが発生しました");
-          } else setMsg("エラーが発生しました");
+        onSubmit={form.onSubmit((values) => {
+          client
+            .post("/api/v1/request", {
+              email: values.email,
+            })
+            .then((res) => {
+              const { status, message }: { status: string; message: string } = res.data;
+              if (status === "OK") {
+                setMsg("メールを確認してください");
+                setBtnDisable(true);
+                form.setFieldValue("termsOfService", false);
+                setTimeout(() => setBtnDisable(false), 10000);
+              } else if (status === "NG") {
+                if (message === "EXIST_EMAIL") setMsg("すでに登録されているメールアドレスです");
+              } else setMsg("エラーが発生しました");
+            })
+            .catch((err) => {
+              const { status, message }: { status: string; message: string } = err.response.data;
+              if (status === "NG") {
+                if (message === "EXIST_EMAIL") setMsg("すでに登録されているメールアドレスです");
+                else if (message === "UNAUTHORIZED_DOMAIN") setMsg("認証ドメインのメールアドレスではないようです");
+                else if (message === "BAD_FORMAT") setMsg("不適切なフォーマットです");
+                else setMsg("エラーが発生しました");
+              } else setMsg("エラーが発生しました");
+            });
         })}
       >
         <TextInput
